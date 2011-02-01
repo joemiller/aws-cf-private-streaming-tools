@@ -183,4 +183,4 @@ where you need to control timing.
 
 Who?
 ----
-Joe Miller - joeym<at>joeym.net
+Joe Miller - joeym -at- joeym.net
