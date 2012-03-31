@@ -106,7 +106,7 @@ with the following attributes:
 
 #### 1. Setup AWS keys ####
     $ export AWS_ACCESS_KEY_ID='xxxxx'
-	$ export AAWS_SECRET_ACCESS_KEY='xxxxxx'
+	$ export AWS_SECRET_ACCESS_KEY='xxxxxx'
 
 #### 2. Create a new Cloudfront Streaming Distribution ####
 	$ ./cf-streaming-distribution.rb create my-video-bucket \
