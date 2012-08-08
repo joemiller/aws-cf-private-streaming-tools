@@ -142,7 +142,7 @@ if command == 'list'
         puts "  Status      : #{dist[:status]}"
         puts "  Enabled     : #{dist[:enabled].to_s}"
         puts "  domain_name : #{dist[:domain_name]}"
-        puts "  origin      : #{dist[:origin]}"
+        puts "  origin      : #{dist[:s3_origin][:dns_name].split(".")[0]}"
         puts "  CNAMEs      : #{cn.join(", ")}"
         puts "  Comment     : #{dist[:comment]}"
     end
@@ -172,7 +172,7 @@ elsif command == 'get'
     puts "  Status          : #{result[:status]}"
     puts "  Enabled         : #{result[:enabled].to_s}"
     puts "  domain_name     : #{result[:domain_name]}"
-    puts "  origin          : #{result[:origin]}"
+    puts "  origin          : #{result[:s3_origin][:dns_name].split(".")[0]}"
     puts "  CNAMEs          : #{cn.join(", ")}"
     puts "  Comment         : #{result[:comment]}"
     if result[:origin_access_identity]
@@ -235,8 +235,13 @@ elsif command == 'create'
     end
 
     begin
-        result = cf.create_streaming_distribution(bucket, comment,
-                                                  true, cnames)
+        config = {
+          :s3_origin  => {:dns_name => bucket},
+          :comment => comment,
+          :enabled => true,
+          :cnames  => Array(cnames),
+        }
+        result = cf.create_streaming_distribution(config)
     rescue RightAws::AwsError => e
         e.errors.each do |code, msg|
             puts "Error (#{code}): #{msg}"
@@ -269,7 +274,7 @@ elsif command == 'modify'
         config[:trusted_signers] = signers  if signers.length > 0
         config[:cnames] = cnames            if cnames.length > 0
         config[:enabled] = enabled          if enabled != nil
-        config[:origin_access_identity] = "origin-access-identity/cloudfront/#{oai}" if oai
+        config[:s3_origin][:origin_access_identity] = "origin-access-identity/cloudfront/#{oai}" if oai
 
         result = cf.set_streaming_distribution_config(aws_id, config)
 
